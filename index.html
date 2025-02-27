@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokémon Type Quiz</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f0f0f0;
+            transform: scale(1.5);
+            transform-origin: top center;
+            margin: 40px 0;
+        }
+        #menu {
+            margin-top: 50px;
+        }
+        #menu-title {
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+        #play-button, #difficulty-button {
+            padding: 15px 30px;
+            font-size: 18px;
+            margin: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        #play-button:hover, #difficulty-button:hover {
+            background-color: #45a049;
+        }
+        #high-score-display {
+            font-size: 20px;
+            margin: 10px;
+        }
+        #quiz {
+            display: none;
+        }
+        #question {
+            font-size: 24px;
+            margin: 20px;
+        }
+        #slots {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 20px;
+        }
+        .slot {
+            width: 100px;
+            height: 100px;
+            border: 2px dashed #333;
+            background-color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        #types {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px;
+            max-width: 810px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .type-icon {
+            width: 80px;
+            cursor: pointer;
+        }
+        #check, #next {
+            padding: 10px 20px;
+            font-size: 16px;
+            margin: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        #check:hover, #next:hover {
+            background-color: #45a049;
+        }
+        #next {
+            display: none;
+        }
+        #result {
+            font-size: 18px;
+            margin: 20px;
+        }
+        #score, #high-score, #question-counter {
+            font-size: 20px;
+            margin: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="menu">
+        <div id="menu-title">Type Quiz</div>
+        <button id="play-button">Play</button><br>
+        <button id="difficulty-button">EASY</button><br>
+        <div id="high-score-display">High Score: <span id="high-score-value">0</span></div>
+    </div>
+    <div id="quiz">
+        <div id="score">Score: <span id="score-value">0</span></div>
+        <div id="question-counter">Question <span id="current-question">1</span>/<span id="total-questions"></span></div>
+        <div id="question"></div>
+        <div id="slots"></div>
+        <div id="types">
+            <img src="https://pokedoku-space.nyc3.cdn.digitaloceanspaces.com/resources/pokemon_types/normal.png" class="type-icon" data-type="normal">
+            <img src="https://pokedoku-space.nyc3.cdn.digitaloceanspaces.com/resources/pokemon_types/fire.png" class="type-icon" data-type="fire">
+            <img src="https://pokedoku-space.nyc3.cdn.digitaloceanspaces.com/resources/pokemon_types/water.png" class="type-icon" data-type="water">
+            <img src="https://pokedoku-space.nyc3.cdn.digitaloceanspaces.com/resources/pokemon_types/grass.png" class="type-icon" data-type="grass">
+            <img src="https://pokedoku-space.nyc3.cdn.digitaloceanspaces.com/resources/pokemon_types/electric.png" class="type-icon" data-type="electric">
+            <img src="https://pokedoku-space.nyc3.cdn.digitaloceanspaces.com/resources/pokemon_types/ice.png" class="type-icon" data-type="ice">
+            <img src="https://pokedoku-space.nyc3.cdn.digitaloceanspaces.com/resources/pokemon_types/fighting.png" class="type-icon" data-type="fighting">
+            <img src="https://pokedoku-space.nyc3.cdn.digitaloceanspaces.com/resources/pokemon_types/poison.png" class="type-icon" data-type="poison">
+            <img src="https://pokedoku-space.nyc3.cdn.digitaloceanspaces.com/resources/pokemon_types/ground.png" class="type-icon" data-type="ground">
+            <img src="https://pokedoku-space.nyc3.cdn.digitaloceanspaces.com/resources/pokemon_types/flying.png" class="type-icon" data-type="flying">
+            <img src="https://pokedoku-space.nyc3.cdn.digitaloceanspaces.com/resources/pokemon_types/psychic.png" class="type-icon" data-type="psychic">
+            <img src="https://pokedoku-space.nyc3.cdn.digitaloceanspaces.com/resources/pokemon_types/bug.png" class="type-icon" data-type="bug">
+            <img src="https://pokedoku-space.nyc3.cdn.digitaloceanspaces.com/resources/pokemon_types/rock.png" class="type-icon" data-type="rock">
+            <img src="https://pokedoku-space.nyc3.cdn.digitaloceanspaces.com/resources/pokemon_types/ghost.png" class="type-icon" data-type="ghost">
+            <img src="https://pokedoku-space.nyc3.cdn.digitaloceanspaces.com/resources/pokemon_types/dragon.png" class="type-icon" data-type="dragon">
+            <img src="https://pokedoku-space.nyc3.cdn.digitaloceanspaces.com/resources/pokemon_types/dark.png" class="type-icon" data-type="dark">
+            <img src="https://pokedoku-space.nyc3.cdn.digitaloceanspaces.com/resources/pokemon_types/steel.png" class="type-icon" data-type="steel">
+            <img src="https://pokedoku-space.nyc3.cdn.digitaloceanspaces.com/resources/pokemon_types/fairy.png" class="type-icon" data-type="fairy">
+        </div>
+        <button id="check" onclick="checkAnswer()">Check</button>
+        <button id="next" onclick="nextQuestion()">Next</button>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        const allQuestions = [
+            { question: "Against which types is Normal effective?", answers: [], completed: false },
+            { question: "Against which types is Fire effective?", answers: ["grass", "ice", "bug", "steel"], completed: false },
+            { question: "Against which types is Water effective?", answers: ["fire", "ground", "rock"], completed: false },
+            { question: "Against which types is Grass effective?", answers: ["water", "ground", "rock"], completed: false },
+            { question: "Against which types is Electric effective?", answers: ["water", "flying"], completed: false },
+            { question: "Against which types is Ice effective?", answers: ["grass", "ground", "flying", "dragon"], completed: false },
+            { question: "Against which types is Fighting effective?", answers: ["normal", "ice", "rock", "dark", "steel"], completed: false },
+            { question: "Against which types is Poison effective?", answers: ["grass", "fairy"], completed: false },
+            { question: "Against which types is Ground effective?", answers: ["fire", "electric", "poison", "rock", "steel"], completed: false },
+            { question: "Against which types is Flying effective?", answers: ["grass", "fighting", "bug"], completed: false },
+            { question: "Against which types is Psychic effective?", answers: ["fighting", "poison"], completed: false },
+            { question: "Against which types is Bug effective?", answers: ["grass", "psychic", "dark"], completed: false },
+            { question: "Against which types is Rock effective?", answers: ["fire", "ice", "flying", "bug"], completed: false },
+            { question: "Against which types is Ghost effective?", answers: ["psychic", "ghost"], completed: false },
+            { question: "Against which types is Dragon effective?", answers: ["dragon"], completed: false },
+            { question: "Against which types is Dark effective?", answers: ["psychic", "ghost"], completed: false },
+            { question: "Against which types is Steel effective?", answers: ["ice", "rock", "fairy"], completed: false },
+            { question: "Against which types is Fairy effective?", answers: ["fighting", "dragon", "dark"], completed: false },
+            { question: "Against which types is Normal not very effective?", answers: ["rock", "steel"], completed: false },
+            { question: "Against which types is Fire not very effective?", answers: ["fire", "water", "rock", "dragon"], completed: false },
+            { question: "Against which types is Water not very effective?", answers: ["water", "grass", "dragon"], completed: false },
+            { question: "Against which types is Grass not very effective?", answers: ["fire", "grass", "poison", "flying", "bug", "dragon", "steel"], completed: false },
+            { question: "Against which types is Electric not very effective?", answers: ["electric", "grass", "dragon"], completed: false },
+            { question: "Against which types is Ice not very effective?", answers: ["fire", "water", "ice", "steel"], completed: false },
+            { question: "Against which types is Fighting not very effective?", answers: ["poison", "flying", "psychic", "bug", "fairy"], completed: false },
+            { question: "Against which types is Poison not very effective?", answers: ["poison", "ground", "rock", "ghost"], completed: false },
+            { question: "Against which types is Ground not very effective?", answers: ["grass", "bug"], completed: false },
+            { question: "Against which types is Flying not very effective?", answers: ["electric", "rock", "steel"], completed: false },
+            { question: "Against which types is Psychic not very effective?", answers: ["psychic", "steel"], completed: false },
+            { question: "Against which types is Bug not very effective?", answers: ["fire", "fighting", "poison", "flying", "ghost", "steel", "fairy"], completed: false },
+            { question: "Against which types is Rock not very effective?", answers: ["fighting", "ground", "steel"], completed: false },
+            { question: "Against which types is Ghost not very effective?", answers: ["dark"], completed: false },
+            { question: "Against which types is Dragon not very effective?", answers: ["steel"], completed: false },
+            { question: "Against which types is Dark not very effective?", answers: ["fighting", "dark", "fairy"], completed: false },
+            { question: "Against which types is Steel not very effective?", answers: ["fire", "water", "electric", "steel"], completed: false },
+            { question: "Against which types is Fairy not very effective?", answers: ["fire", "poison", "steel"], completed: false },
+            { question: "Against which types does Normal have no effect?", answers: ["ghost"], completed: false },
+            { question: "Against which types does Electric have no effect?", answers: ["ground"], completed: false },
+            { question: "Against which types does Fighting have no effect?", answers: ["ghost"], completed: false },
+            { question: "Against which types does Poison have no effect?", answers: ["steel"], completed: false },
+            { question: "Against which types does Ground have no effect?", answers: ["flying"], completed: false },
+            { question: "Against which types does Psychic have no effect?", answers: ["dark"], completed: false },
+            { question: "Against which types does Ghost have no effect?", answers: ["normal"], completed: false },
+            { question: "Against which types does Dragon have no effect?", answers: ["fairy"], completed: false },
+            { question: "Against which types is Water/Flying (Gyarados) effective?", answers: ["fire", "ground", "rock", "grass", "fighting", "bug"], completed: false },
+            { question: "Against which types is Dragon/Ground (Garchomp) effective?", answers: ["dragon", "fire", "electric", "poison", "rock", "steel"], completed: false },
+            { question: "Against which types is Steel/Fairy (Mawile) effective?", answers: ["ice", "rock", "fairy", "fighting", "dragon", "dark"], completed: false },
+            { question: "Against which types is Ghost/Dark (Sableye) effective?", answers: ["psychic", "ghost"], completed: false },
+            { question: "Against which types is Fire/Fighting (Blaziken) effective?", answers: ["grass", "ice", "bug", "steel", "normal", "rock", "dark"], completed: false },
+            { question: "Against which types is Grass/Poison (Bulbasaur) effective?", answers: ["water", "ground", "rock", "grass", "fairy"], completed: false },
+            { question: "Against which types is Electric/Steel (Magnezone) effective?", answers: ["water", "flying", "ice", "rock", "fairy"], completed: false },
+            { question: "Against which types is Bug/Flying (Butterfree) effective?", answers: ["grass", "psychic", "dark", "fighting", "bug"], completed: false },
+            { question: "Against which types is Rock/Ground (Rhydon) effective?", answers: ["fire", "ice", "flying", "bug", "electric", "poison", "rock", "steel"], completed: false },
+            { question: "Against which types is Psychic/Fairy (Gardevoir) effective?", answers: ["fighting", "poison", "dragon", "dark"], completed: false }
+        ];
+
+        let shuffledQuestions = [];
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let highScore = localStorage.getItem("pokemonTypeQuizHighScore") || 0;
+        let isEasyMode = true;
+
+        document.getElementById("high-score-value").textContent = highScore;
+
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function startQuiz() {
+            document.getElementById("menu").style.display = "none";
+            document.getElementById("quiz").style.display = "block";
+            score = 0;
+            document.getElementById("score-value").textContent = score;
+
+            // Filter questions based on difficulty
+            if (isEasyMode) {
+                shuffledQuestions = shuffle(allQuestions.filter(q => q.question.includes("effective") && !q.question.includes("(")));
+            } else {
+                shuffledQuestions = shuffle([...allQuestions]);
+            }
+
+            document.getElementById("total-questions").textContent = shuffledQuestions.length;
+            currentQuestionIndex = 0;
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            const question = shuffledQuestions[currentQuestionIndex];
+            document.getElementById("question").textContent = question.question;
+            document.getElementById("current-question").textContent = currentQuestionIndex + 1;
+            const slotsDiv = document.getElementById("slots");
+            slotsDiv.innerHTML = "";
+            if (question.answers.length === 0) {
+                slotsDiv.textContent = "None";
+            } else {
+                question.answers.forEach(() => {
+                    const slot = document.createElement("div");
+                    slot.className = "slot";
+                    slot.onclick = removeFromSlot;
+                    slotsDiv.appendChild(slot);
+                });
+            }
+            document.getElementById("next").style.display = "none";
+            document.getElementById("result").textContent = "";
+            resetIcons();
+        }
+
+        function resetIcons() {
+            const icons = document.querySelectorAll(".type-icon");
+            icons.forEach(icon => {
+                icon.style.opacity = "1";
+                icon.onclick = addToSlot;
+            });
+        }
+
+        function addToSlot(e) {
+            const type = e.target.dataset.type;
+            const slots = document.querySelectorAll(".slot");
+            for (let slot of slots) {
+                if (!slot.querySelector("img")) {
+                    const img = document.createElement("img");
+                    img.src = e.target.src;
+                    img.className = "type-icon";
+                    img.dataset.type = type;
+                    img.style.opacity = "0.5";
+                    img.onclick = removeFromSlot;
+                    slot.appendChild(img);
+                    e.target.style.opacity = "0.5";
+                    e.target.onclick = null;
+                    break;
+                }
+            }
+        }
+
+        function removeFromSlot(e) {
+            const target = e.target;
+            if (target.className === "type-icon" && target.parentNode.className === "slot") {
+                const slot = target.parentNode;
+                const type = target.dataset.type;
+                slot.removeChild(target);
+                const originalIcon = document.querySelector(`.type-icon[data-type="${type}"]`);
+                originalIcon.style.opacity = "1";
+                originalIcon.onclick = addToSlot;
+            } else if (target.className === "slot" && target.querySelector("img")) {
+                const img = target.querySelector("img");
+                const type = img.dataset.type;
+                target.removeChild(img);
+                const originalIcon = document.querySelector(`.type-icon[data-type="${type}"]`);
+                originalIcon.style.opacity = "1";
+                originalIcon.onclick = addToSlot;
+            }
+        }
+
+        function checkAnswer() {
+            const question = shuffledQuestions[currentQuestionIndex];
+            if (question.completed) {
+                document.getElementById("result").textContent = "You’ve already scored this question!";
+                return;
+            }
+
+            if (question.answers.length === 0) {
+                document.getElementById("result").textContent = "Correct! This type has no such matchups.";
+                score += 10;
+                question.completed = true;
+                document.getElementById("score-value").textContent = score;
+                document.getElementById("next").style.display = "inline";
+                return;
+            }
+
+            const slots = document.querySelectorAll(".slot");
+            let userAnswers = [];
+            slots.forEach(slot => {
+                const img = slot.querySelector("img");
+                if (img) userAnswers.push(img.dataset.type);
+            });
+
+            if (userAnswers.length !== question.answers.length) {
+                document.getElementById("result").textContent = "Please fill all slots!";
+                return;
+            }
+
+            const correct = userAnswers.every(answer => question.answers.includes(answer)) &&
+                            question.answers.every(answer => userAnswers.includes(answer));
+            if (correct) {
+                document.getElementById("result").textContent = "Correct! Well done!";
+                score += 10;
+                question.completed = true;
+                document.getElementById("score-value").textContent = score;
+                document.getElementById("next").style.display = "inline";
+            } else {
+                document.getElementById("result").textContent = `Wrong! Correct answers: ${question.answers.join(", ")}. -5 points.`;
+                score -= 5;
+                if (score < 0) score = 0;
+                document.getElementById("score-value").textContent = score;
+            }
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex >= shuffledQuestions.length) {
+                document.getElementById("question").textContent = "Quiz Complete!";
+                document.getElementById("slots").innerHTML = "";
+                document.getElementById("result").textContent = `Final Score: ${score}`;
+                document.getElementById("check").style.display = "none";
+                document.getElementById("next").style.display = "none";
+                if (score > highScore) {
+                    highScore = score;
+                    localStorage.setItem("pokemonTypeQuizHighScore", highScore);
+                    document.getElementById("high-score-value").textContent = highScore;
+                    document.getElementById("result").textContent += " - New High Score!";
+                }
+                return;
+            }
+            loadQuestion();
+        }
+
+        // Menu interactions
+        document.getElementById("play-button").onclick = startQuiz;
+        document.getElementById("difficulty-button").onclick = function() {
+            isEasyMode = !isEasyMode;
+            this.textContent = isEasyMode ? "EASY" : "HARD";
+        };
+
+        document.querySelectorAll(".type-icon").forEach(icon => {
+            icon.onclick = addToSlot;
+        });
+    </script>
+</body>
+</html>
