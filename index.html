@@ -240,38 +240,37 @@
         }
 
         function startQuiz() {
-            document.getElementById("menu").style.display = "none";
-            document.getElementById("quiz").style.display = "block";
-            score = 0;
-            document.getElementById("score-value").textContent = score;
+    document.getElementById("menu").style.display = "none";
+    document.getElementById("quiz").style.display = "block";
+    score = 0;
+    document.getElementById("score-value").textContent = score;
 
-            if (difficulty === "EASY") {
-                // Single-type, super effective only, no multi-type Pokémon
-                shuffledQuestions = shuffle(
-                    allQuestions.filter(q =>
-                        q.question.startsWith("Against which types is ") && 
-                        q.question.includes(" effective?") && 
-                        !q.question.includes("(") // Exclude multi-type Pokémon
-                    ).slice(0, 18) // Ensure exactly 18 questions
-                );
-            } else if (difficulty === "NORMAL") {
-                // Single-type, super effective + not very effective, no multi-type Pokémon
-                shuffledQuestions = shuffle(
-                    allQuestions.filter(q =>
-                        q.question.startsWith("Against which types is ") && 
-                        (q.question.includes(" effective?") || q.question.includes("not very effective?")) && 
-                        !q.question.includes("(") // Exclude multi-type Pokémon
-                    )
-                );
-            } else { // HARD
-                // Include all questions
-                shuffledQuestions = shuffle([...allQuestions]);
-            }
+    if (difficulty === "EASY") {
+        // Single-type, very effective only, no dual-type Pokémon
+        shuffledQuestions = shuffle(
+            allQuestions.filter(q =>
+                q.question.startsWith("Against which types is") && 
+                q.question.includes("very effective?")
+            ).slice(0, 18) // Ensure exactly 18 questions
+        );
+    } else if (difficulty === "NORMAL") {
+        // Single-type, very effective + not very effective, no dual-type Pokémon
+        shuffledQuestions = shuffle(
+            allQuestions.filter(q =>
+                (q.question.startsWith("Against which types is") || q.question.startsWith("What type is")) &&
+                (q.question.includes("very effective?") || q.question.includes("not very effective?"))
+            )
+        ).slice(0, 36); // Limit to 36 questions
+    } else { // HARD
+        // Include all questions
+        shuffledQuestions = shuffle([...allQuestions]);
+    }
 
-            document.getElementById("total-questions").textContent = shuffledQuestions.length;
-            currentQuestionIndex = 0;
-            loadQuestion();
-        }
+    document.getElementById("total-questions").textContent = shuffledQuestions.length;
+    currentQuestionIndex = 0;
+    loadQuestion();
+}
+
 
         function loadQuestion() {
             const question = shuffledQuestions[currentQuestionIndex];
