@@ -13,14 +13,14 @@
             transform-origin: top center;
             margin: 40px 0;
         }
-        #menu {
+        #menu, #scores-menu {
             margin-top: 50px;
         }
-        #menu-title {
+        #menu-title, #scores-title {
             font-size: 36px;
             margin-bottom: 20px;
         }
-        #play-button, #difficulty-button {
+        #play-button, #difficulty-button, #scores-button, #back-button {
             padding: 15px 30px;
             font-size: 18px;
             margin: 10px;
@@ -29,12 +29,26 @@
             border: none;
             cursor: pointer;
         }
-        #play-button:hover, #difficulty-button:hover {
+        #play-button:hover, #difficulty-button:hover, #scores-button:hover, #back-button:hover {
             background-color: #45a049;
         }
-        #high-score-display {
-            font-size: 20px;
-            margin: 10px;
+        #scores-menu {
+            display: none;
+        }
+        #scores-table {
+            margin: 20px auto;
+            border-collapse: collapse;
+            width: 80%;
+            max-width: 600px;
+        }
+        #scores-table th, #scores-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            font-size: 16px;
+        }
+        #scores-table th {
+            background-color: #4CAF50;
+            color: white;
         }
         #quiz {
             display: none;
@@ -92,7 +106,7 @@
             font-size: 18px;
             margin: 20px;
         }
-        #score, #high-score, #question-counter {
+        #score, #question-counter {
             font-size: 20px;
             margin: 10px;
         }
@@ -101,9 +115,24 @@
 <body>
     <div id="menu">
         <div id="menu-title">Type Quiz</div>
-        <button id="play-button">Play</button><br>
+        <button id="play-button">PLAY</button><br>
         <button id="difficulty-button">EASY</button><br>
-        <div id="high-score-display">High Score: <span id="high-score-value">0</span></div>
+        <button id="scores-button">SCORES</button>
+    </div>
+    <div id="scores-menu">
+        <div id="scores-title">High Scores</div>
+        <table id="scores-table">
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>EASY</th>
+                    <th>NORMAL</th>
+                    <th>HARD</th>
+                </tr>
+            </thead>
+            <tbody id="scores-body"></tbody>
+        </table>
+        <button id="back-button">Back</button>
     </div>
     <div id="quiz">
         <div id="score">Score: <span id="score-value">0</span></div>
@@ -196,10 +225,7 @@
         let shuffledQuestions = [];
         let currentQuestionIndex = 0;
         let score = 0;
-        let highScore = localStorage.getItem("pokemonTypeQuizHighScore") || 0;
-        let isEasyMode = true;
-
-        document.getElementById("high-score-value").textContent = highScore;
+        let difficulty = "EASY"; // EASY, NORMAL, HARD
 
         function shuffle(array) {
             for (let i = array.length - 1; i > 0; i--) {
@@ -215,10 +241,11 @@
             score = 0;
             document.getElementById("score-value").textContent = score;
 
-            // Filter questions based on difficulty
-            if (isEasyMode) {
+            if (difficulty === "EASY") {
                 shuffledQuestions = shuffle(allQuestions.filter(q => q.question.includes("effective") && !q.question.includes("(")));
-            } else {
+            } else if (difficulty === "NORMAL") {
+                shuffledQuestions = shuffle(allQuestions.filter(q => q.question.includes("effective") && !q.question.includes("(")));
+            } else { // HARD
                 shuffledQuestions = shuffle([...allQuestions]);
             }
 
@@ -346,22 +373,63 @@
                 document.getElementById("result").textContent = `Final Score: ${score}`;
                 document.getElementById("check").style.display = "none";
                 document.getElementById("next").style.display = "none";
-                if (score > highScore) {
-                    highScore = score;
-                    localStorage.setItem("pokemonTypeQuizHighScore", highScore);
-                    document.getElementById("high-score-value").textContent = highScore;
-                    document.getElementById("result").textContent += " - New High Score!";
-                }
+                
+                // Update high scores
+                updateHighScores(score, difficulty);
                 return;
             }
             loadQuestion();
         }
 
+        function updateHighScores(newScore, diff) {
+            const key = `pokemonTypeQuizHighScores${diff}`;
+            let scores = JSON.parse(localStorage.getItem(key)) || [];
+            scores.push(newScore);
+            scores.sort((a, b) => b - a); // Descending order
+            scores = scores.slice(0, 10); // Keep top 10
+            localStorage.setItem(key, JSON.stringify(scores));
+        }
+
+        function showScores() {
+            document.getElementById("menu").style.display = "none";
+            document.getElementById("scores-menu").style.display = "block";
+            const tbody = document.getElementById("scores-body");
+            tbody.innerHTML = "";
+
+            const easyScores = JSON.parse(localStorage.getItem("pokemonTypeQuizHighScoresEASY")) || [];
+            const normalScores = JSON.parse(localStorage.getItem("pokemonTypeQuizHighScoresNORMAL")) || [];
+            const hardScores = JSON.parse(localStorage.getItem("pokemonTypeQuizHighScoresHARD")) || [];
+
+            for (let i = 0; i < 10; i++) {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${i + 1}</td>
+                    <td>${easyScores[i] || 0}</td>
+                    <td>${normalScores[i] || 0}</td>
+                    <td>${hardScores[i] || 0}</td>
+                `;
+                tbody.appendChild(row);
+            }
+        }
+
         // Menu interactions
         document.getElementById("play-button").onclick = startQuiz;
         document.getElementById("difficulty-button").onclick = function() {
-            isEasyMode = !isEasyMode;
-            this.textContent = isEasyMode ? "EASY" : "HARD";
+            if (difficulty === "EASY") {
+                difficulty = "NORMAL";
+                this.textContent = "NORMAL";
+            } else if (difficulty === "NORMAL") {
+                difficulty = "HARD";
+                this.textContent = "HARD";
+            } else {
+                difficulty = "EASY";
+                this.textContent = "EASY";
+            }
+        };
+        document.getElementById("scores-button").onclick = showScores;
+        document.getElementById("back-button").onclick = function() {
+            document.getElementById("scores-menu").style.display = "none";
+            document.getElementById("menu").style.display = "block";
         };
 
         document.querySelectorAll(".type-icon").forEach(icon => {
