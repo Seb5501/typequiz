@@ -348,48 +348,52 @@
         }
 
         function checkAnswer() {
-            const question = shuffledQuestions[currentQuestionIndex];
-            if (question.completed) {
-                document.getElementById("result").textContent = "You've already scored this question!";
-                return;
-            }
+    const question = shuffledQuestions[currentQuestionIndex];
+    if (question.completed) {
+        document.getElementById("result").textContent = "You've already scored this question!";
+        return;
+    }
 
-            if (question.answers.length === 0) {
-                document.getElementById("result").textContent = "Correct! This type has no such matchups.";
-                score += 10;
-                question.completed = true;
-                document.getElementById("score-value").textContent = score;
-                document.getElementById("next").style.display = "inline";
-                return;
-            }
+    if (question.answers.length === 0) {
+        document.getElementById("result").textContent = "Correct! This type has no such matchups.";
+        score += 10;
+        question.completed = true;
+        document.getElementById("score-value").textContent = score;
+        document.getElementById("next").style.display = "inline";
+        return;
+    }
 
-            const slots = document.querySelectorAll(".slot");
-            let userAnswers = [];
-            slots.forEach(slot => {
-                const img = slot.querySelector("img");
-                if (img) userAnswers.push(img.dataset.type);
-            });
-
-            if (userAnswers.length !== question.answers.length) {
-                document.getElementById("result").textContent = "Please fill all slots!";
-                return;
-            }
-
-            const correct = userAnswers.every(answer => question.answers.includes(answer)) &&
-                            question.answers.every(answer => userAnswers.includes(answer));
-            if (correct) {
-                document.getElementById("result").textContent = "Correct! Well done!";
-                score += 10;
-                question.completed = true;
-                document.getElementById("score-value").textContent = score;
-                document.getElementById("next").style.display = "inline";
-            } else {
-                document.getElementById("result").textContent = `Wrong! Correct answers: ${question.answers.join(", ")}. -5 points.`;
-                score -= 5;
-                if (score < 0) score = 0;
-                document.getElementById("score-value").textContent = score;
-            }
+    const slots = document.querySelectorAll(".slot");
+    let userAnswers = [];
+    slots.forEach(slot => {
+        const img = slot.querySelector("img");
+        if (img) {
+            // Capitalize first letter to match the format in the answers array
+            const type = img.dataset.type.charAt(0).toUpperCase() + img.dataset.type.slice(1);
+            userAnswers.push(type);
         }
+    });
+
+    if (userAnswers.length !== question.answers.length) {
+        document.getElementById("result").textContent = "Please fill all slots!";
+        return;
+    }
+
+    const correct = userAnswers.every(answer => question.answers.includes(answer)) &&
+                    question.answers.every(answer => userAnswers.includes(answer));
+    if (correct) {
+        document.getElementById("result").textContent = "Correct! Well done!";
+        score += 10;
+        question.completed = true;
+        document.getElementById("score-value").textContent = score;
+        document.getElementById("next").style.display = "inline";
+    } else {
+        document.getElementById("result").textContent = `Wrong! Correct answers: ${question.answers.join(", ")}. -5 points.`;
+        score -= 5;
+        if (score < 0) score = 0;
+        document.getElementById("score-value").textContent = score;
+    }
+}
 
         function nextQuestion() {
             currentQuestionIndex++;
