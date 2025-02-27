@@ -11,7 +11,7 @@
             background-color: #f0f0f0;
             transform: scale(1.5);
             transform-origin: top center;
-            margin: 60px 0;
+            margin: 100px 0;
         }
         #menu, #scores-menu {
             margin-top: 50px;
@@ -31,14 +31,6 @@
         }
         #play-button:hover, #difficulty-button:hover, #scores-button:hover, #back-button:hover, #quiz-back-button:hover, #scores-back-button:hover {
             background-color: #45a049;
-        }
-        #quiz-back-button, #scores-back-button {
-            position: fixed; /* Changed to fixed */
-            top: 15px; /* Adjusted for visibility */
-            left: 15px; /* Adjusted for visibility */
-            padding: 10px 20px;
-            font-size: 16px;
-            z-index: 1000; /* Ensure it’s on top */
         }
         #scores-menu {
             display: none;
@@ -123,12 +115,11 @@
 <body>
     <div id="menu">
         <div id="menu-title">Type Quiz</div>
-        <button id="play-button">Play</button><br>
+        <button id="play-button">PLAY</button><br>
         <button id="difficulty-button">EASY</button><br>
         <button id="scores-button">SCORES</button>
     </div>
     <div id="scores-menu">
-        <button id="scores-back-button">Back</button>
         <div id="scores-title">High Scores</div>
         <table id="scores-table">
             <thead>
@@ -141,9 +132,9 @@
             </thead>
             <tbody id="scores-body"></tbody>
         </table>
+        <button id="scores-back-button">Back</button>
     </div>
     <div id="quiz">
-        <button id="quiz-back-button">Back</button>
         <div id="score">Score: <span id="score-value">0</span></div>
         <div id="question-counter">Question <span id="current-question">1</span>/<span id="total-questions"></span></div>
         <div id="question"></div>
@@ -170,6 +161,7 @@
         </div>
         <button id="check" onclick="checkAnswer()">Check</button>
         <button id="next" onclick="nextQuestion()">Next</button>
+        <button id="quiz-back-button">Back</button>
         <div id="result"></div>
     </div>
 
@@ -251,9 +243,9 @@
             document.getElementById("score-value").textContent = score;
 
             if (difficulty === "EASY") {
-                shuffledQuestions = shuffle(allQuestions.filter(q => q.question.includes("effective") && !q.question.includes("(")));
+                shuffledQuestions = shuffle(allQuestions.filter(q => q.question.startsWith("Against which types is ") && q.question.includes(" effective?") && !q.question.includes("(")));
             } else if (difficulty === "NORMAL") {
-                shuffledQuestions = shuffle(allQuestions.filter(q => q.question.includes("effective") && !q.question.includes("(")));
+                shuffledQuestions = shuffle(allQuestions.filter(q => (q.question.includes(" effective?") || q.question.includes("not very effective?")) && !q.question.includes("(")));
             } else { // HARD
                 shuffledQuestions = shuffle([...allQuestions]);
             }
