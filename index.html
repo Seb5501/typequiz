@@ -110,6 +110,13 @@
             font-size: 20px;
             margin: 10px;
         }
+        /* Added styles for button container */
+        #button-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 10px;
+        }
     </style>
 </head>
 <body>
@@ -159,9 +166,12 @@
             <img src="https://pokedoku-space.nyc3.cdn.digitaloceanspaces.com/resources/pokemon_types/steel.png" class="type-icon" data-type="steel">
             <img src="https://pokedoku-space.nyc3.cdn.digitaloceanspaces.com/resources/pokemon_types/fairy.png" class="type-icon" data-type="fairy">
         </div>
-        <button id="check" onclick="checkAnswer()">Check</button>
-        <button id="next" onclick="nextQuestion()">Next</button>
-        <button id="quiz-back-button">Back</button>
+        <!-- Added container for buttons to arrange them vertically -->
+        <div id="button-container">
+            <button id="check" onclick="checkAnswer()">Check</button>
+            <button id="quiz-back-button">Back</button>
+            <button id="next" onclick="nextQuestion()">Next</button>
+        </div>
         <div id="result"></div>
     </div>
 
@@ -237,38 +247,38 @@
         }
 
         function startQuiz() {
-    document.getElementById("menu").style.display = "none";
-    document.getElementById("quiz").style.display = "block";
-    score = 0;
-    document.getElementById("score-value").textContent = score;
+            document.getElementById("menu").style.display = "none";
+            document.getElementById("quiz").style.display = "block";
+            score = 0;
+            document.getElementById("score-value").textContent = score;
 
-    if (difficulty === "EASY") {
-        // Single-type, super effective only, no multi-type Pokémon
-        shuffledQuestions = shuffle(
-            allQuestions.filter(q =>
-                q.question.startsWith("Against which types is ") && 
-                q.question.includes(" effective?") && 
-                !q.question.includes("(") // Exclude multi-type Pokémon
-            ).slice(0, 18) // Ensure exactly 18 questions
-        );
-    } else if (difficulty === "NORMAL") {
-        // Single-type, super effective + not very effective, no multi-type Pokémon
-        shuffledQuestions = shuffle(
-            allQuestions.filter(q =>
-                q.question.startsWith("Against which types is ") && 
-                (q.question.includes(" effective?") || q.question.includes("not very effective?")) && 
-                !q.question.includes("(") // Exclude multi-type Pokémon
-            )
-        );
-    } else { // HARD
-        // Include all questions
-        shuffledQuestions = shuffle([...allQuestions]);
-    }
+            if (difficulty === "EASY") {
+                // Single-type, super effective only, no multi-type Pokémon
+                shuffledQuestions = shuffle(
+                    allQuestions.filter(q =>
+                        q.question.startsWith("Against which types is ") && 
+                        q.question.includes(" effective?") && 
+                        !q.question.includes("(") // Exclude multi-type Pokémon
+                    ).slice(0, 18) // Ensure exactly 18 questions
+                );
+            } else if (difficulty === "NORMAL") {
+                // Single-type, super effective + not very effective, no multi-type Pokémon
+                shuffledQuestions = shuffle(
+                    allQuestions.filter(q =>
+                        q.question.startsWith("Against which types is ") && 
+                        (q.question.includes(" effective?") || q.question.includes("not very effective?")) && 
+                        !q.question.includes("(") // Exclude multi-type Pokémon
+                    )
+                );
+            } else { // HARD
+                // Include all questions
+                shuffledQuestions = shuffle([...allQuestions]);
+            }
 
-    document.getElementById("total-questions").textContent = shuffledQuestions.length;
-    currentQuestionIndex = 0;
-    loadQuestion();
-}
+            document.getElementById("total-questions").textContent = shuffledQuestions.length;
+            currentQuestionIndex = 0;
+            loadQuestion();
+        }
 
         function loadQuestion() {
             const question = shuffledQuestions[currentQuestionIndex];
@@ -340,7 +350,7 @@
         function checkAnswer() {
             const question = shuffledQuestions[currentQuestionIndex];
             if (question.completed) {
-                document.getElementById("result").textContent = "You’ve already scored this question!";
+                document.getElementById("result").textContent = "You've already scored this question!";
                 return;
             }
 
