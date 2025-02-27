@@ -243,7 +243,7 @@
             document.getElementById("score-value").textContent = score;
 
             if (difficulty === "EASY") {
-                shuffledQuestions = shuffle(allQuestions.filter(q => q.question.startsWith("Against which types is ") && q.question.includes(" effective?") && !q.question.includes("(")));
+                shuffledQuestions = shuffle(allQuestions.filter(q => q.question.startsWith("Against which types is ") && q.question.excludes(" not") && !q.question.includes("(")));
             } else if (difficulty === "NORMAL") {
                 shuffledQuestions = shuffle(allQuestions.filter(q => (q.question.includes(" effective?") || q.question.includes("not very effective?")) && !q.question.includes("(")));
             } else { // HARD
