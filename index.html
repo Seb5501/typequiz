@@ -20,7 +20,8 @@
             font-size: 36px;
             margin-bottom: 20px;
         }
-        #play-button, #difficulty-button, #scores-button, #back-button, #quiz-back-button, #scores-back-button {
+        /* Standardized button styling */
+        .btn {
             padding: 15px 30px;
             font-size: 18px;
             margin: 10px;
@@ -28,8 +29,9 @@
             color: white;
             border: none;
             cursor: pointer;
+            min-width: 150px;
         }
-        #play-button:hover, #difficulty-button:hover, #scores-button:hover, #back-button:hover, #quiz-back-button:hover, #scores-back-button:hover {
+        .btn:hover {
             background-color: #45a049;
         }
         #scores-menu {
@@ -52,6 +54,8 @@
         }
         #quiz {
             display: none;
+            position: relative;
+            min-height: 600px;
         }
         #question {
             font-size: 24px;
@@ -87,17 +91,17 @@
             width: 80px;
             cursor: pointer;
         }
-        #check, #next {
-            padding: 10px 20px;
-            font-size: 16px;
-            margin: 10px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            cursor: pointer;
+        /* Button container for positioning */
+        #button-container {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            display: flex;
+            gap: 10px;
         }
-        #check:hover, #next:hover {
-            background-color: #45a049;
+        #next-container {
+            margin: 20px auto;
+            text-align: center;
         }
         #next {
             display: none;
@@ -110,21 +114,14 @@
             font-size: 20px;
             margin: 10px;
         }
-        /* Added styles for button container */
-        #button-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin: 10px;
-        }
     </style>
 </head>
 <body>
     <div id="menu">
         <div id="menu-title">Type Quiz</div>
-        <button id="play-button">PLAY</button><br>
-        <button id="difficulty-button">EASY</button><br>
-        <button id="scores-button">SCORES</button>
+        <button id="play-button" class="btn">PLAY</button><br>
+        <button id="difficulty-button" class="btn">EASY</button><br>
+        <button id="scores-button" class="btn">SCORES</button>
     </div>
     <div id="scores-menu">
         <div id="scores-title">High Scores</div>
@@ -139,7 +136,7 @@
             </thead>
             <tbody id="scores-body"></tbody>
         </table>
-        <button id="scores-back-button">Back</button>
+        <button id="scores-back-button" class="btn">Back</button>
     </div>
     <div id="quiz">
         <div id="score">Score: <span id="score-value">0</span></div>
@@ -166,13 +163,14 @@
             <img src="https://pokedoku-space.nyc3.cdn.digitaloceanspaces.com/resources/pokemon_types/steel.png" class="type-icon" data-type="steel">
             <img src="https://pokedoku-space.nyc3.cdn.digitaloceanspaces.com/resources/pokemon_types/fairy.png" class="type-icon" data-type="fairy">
         </div>
-        <!-- Added container for buttons to arrange them vertically -->
-        <div id="button-container">
-            <button id="check" onclick="checkAnswer()">Check</button>
-            <button id="quiz-back-button">Back</button>
-            <button id="next" onclick="nextQuestion()">Next</button>
+        <div id="next-container">
+            <button id="next" class="btn" onclick="nextQuestion()">Next</button>
         </div>
         <div id="result"></div>
+        <div id="button-container">
+            <button id="quiz-back-button" class="btn">Back</button>
+            <button id="check" class="btn" onclick="checkAnswer()">Check</button>
+        </div>
     </div>
 
     <script>
