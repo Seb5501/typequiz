@@ -12,6 +12,7 @@
             transform: scale(1.5);
             transform-origin: top center;
             margin: 40px 0;
+            position: relative;
         }
         #menu, #scores-menu {
             margin-top: 50px;
@@ -20,7 +21,7 @@
             font-size: 36px;
             margin-bottom: 20px;
         }
-        #play-button, #difficulty-button, #scores-button, #back-button {
+        #play-button, #difficulty-button, #scores-button, #back-button, #quiz-back-button, #scores-back-button {
             padding: 15px 30px;
             font-size: 18px;
             margin: 10px;
@@ -29,8 +30,15 @@
             border: none;
             cursor: pointer;
         }
-        #play-button:hover, #difficulty-button:hover, #scores-button:hover, #back-button:hover {
+        #play-button:hover, #difficulty-button:hover, #scores-button:hover, #back-button:hover, #quiz-back-button:hover, #scores-back-button:hover {
             background-color: #45a049;
+        }
+        #quiz-back-button, #scores-back-button {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
         }
         #scores-menu {
             display: none;
@@ -115,11 +123,12 @@
 <body>
     <div id="menu">
         <div id="menu-title">Type Quiz</div>
-        <button id="play-button">PLAY</button><br>
+        <button id="play-button">Play</button><br>
         <button id="difficulty-button">EASY</button><br>
         <button id="scores-button">SCORES</button>
     </div>
     <div id="scores-menu">
+        <button id="scores-back-button">Back</button>
         <div id="scores-title">High Scores</div>
         <table id="scores-table">
             <thead>
@@ -132,9 +141,9 @@
             </thead>
             <tbody id="scores-body"></tbody>
         </table>
-        <button id="back-button">Back</button>
     </div>
     <div id="quiz">
+        <button id="quiz-back-button">Back</button>
         <div id="score">Score: <span id="score-value">0</span></div>
         <div id="question-counter">Question <span id="current-question">1</span>/<span id="total-questions"></span></div>
         <div id="question"></div>
@@ -225,7 +234,7 @@
         let shuffledQuestions = [];
         let currentQuestionIndex = 0;
         let score = 0;
-        let difficulty = "EASY"; // EASY, NORMAL, HARD
+        let difficulty = "EASY";
 
         function shuffle(array) {
             for (let i = array.length - 1; i > 0; i--) {
@@ -373,8 +382,6 @@
                 document.getElementById("result").textContent = `Final Score: ${score}`;
                 document.getElementById("check").style.display = "none";
                 document.getElementById("next").style.display = "none";
-                
-                // Update high scores
                 updateHighScores(score, difficulty);
                 return;
             }
@@ -385,8 +392,8 @@
             const key = `pokemonTypeQuizHighScores${diff}`;
             let scores = JSON.parse(localStorage.getItem(key)) || [];
             scores.push(newScore);
-            scores.sort((a, b) => b - a); // Descending order
-            scores = scores.slice(0, 10); // Keep top 10
+            scores.sort((a, b) => b - a);
+            scores = scores.slice(0, 10);
             localStorage.setItem(key, JSON.stringify(scores));
         }
 
@@ -412,6 +419,12 @@
             }
         }
 
+        function showMainMenu() {
+            document.getElementById("quiz").style.display = "none";
+            document.getElementById("scores-menu").style.display = "none";
+            document.getElementById("menu").style.display = "block";
+        }
+
         // Menu interactions
         document.getElementById("play-button").onclick = startQuiz;
         document.getElementById("difficulty-button").onclick = function() {
@@ -427,10 +440,8 @@
             }
         };
         document.getElementById("scores-button").onclick = showScores;
-        document.getElementById("back-button").onclick = function() {
-            document.getElementById("scores-menu").style.display = "none";
-            document.getElementById("menu").style.display = "block";
-        };
+        document.getElementById("quiz-back-button").onclick = showMainMenu;
+        document.getElementById("scores-back-button").onclick = showMainMenu;
 
         document.querySelectorAll(".type-icon").forEach(icon => {
             icon.onclick = addToSlot;
