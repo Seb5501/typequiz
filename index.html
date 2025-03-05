@@ -271,43 +271,101 @@ const allQuestions = [
 ];
 
 
-        let shuffledQuestions = [];
-        let currentQuestionIndex = 0;
-        let score = 0;
-        let difficulty = "EASY";
+      let shuffledQuestions = [];
+let currentQuestionIndex = 0;
+let score = 0;
+let difficulty = "EASY";
 
-        function shuffle(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
-            }
-            return array;
-        }
+function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+}
 
-        function startQuiz() {
+function startQuiz() {
     document.getElementById("menu").style.display = "none";
     document.getElementById("quiz").style.display = "block";
     score = 0;
     document.getElementById("score-value").textContent = score;
 
     if (difficulty === "EASY") {
-        // Single-type, very effective only, no dual-type Pokémon
+        // 14 single-type "Which types are very effective against [Type]?" questions
         shuffledQuestions = shuffle(
-            allQuestions.filter(q =>
-                q.question.startsWith("Against which types is") && 
-                q.question.includes("very effective?")
-            ).slice(0, 18) // Ensure exactly 18 questions
+            allQuestions.filter(q => [
+                "Which types are very effective against Fire?",
+                "Which types are very effective against Water?",
+                "Which types are very effective against Grass?",
+                "Which type is very effective against Electric?",
+                "Which types are very effective against Ice?",
+                "Which types are very effective against Fighting?",
+                "Which types are very effective against Poison?",
+                "Which types are very effective against Ground?",
+                "Which types are very effective against Flying?",
+                "Which types are very effective against Psychic?",
+                "Which types are very effective against Bug?",
+                "Which types are very effective against Rock?",
+                "Which types are very effective against Ghost?",
+                "Which types are very effective against Dragon?"
+            ].includes(q.question))
         );
     } else if (difficulty === "NORMAL") {
-        // Single-type, very effective + not very effective, no dual-type Pokémon
+        // 45 questions: all single-type effectiveness (both directions) + selected dual-type effectiveness
         shuffledQuestions = shuffle(
-            allQuestions.filter(q =>
-                (q.question.startsWith("Against which types is") || q.question.startsWith("What type is")) &&
-                (q.question.includes("very effective?") || q.question.includes("not very effective?"))
-            )
-        ).slice(0, 36); // Limit to 36 questions
+            allQuestions.filter(q => [
+                // Single-type "Which types are very effective against [Type]?"
+                "Which types are very effective against Fire?",
+                "Which types are very effective against Water?",
+                "Which types are very effective against Grass?",
+                "Which type is very effective against Electric?",
+                "Which types are very effective against Ice?",
+                "Which types are very effective against Fighting?",
+                "Which types are very effective against Poison?",
+                "Which types are very effective against Ground?",
+                "Which types are very effective against Flying?",
+                "Which types are very effective against Psychic?",
+                "Which types are very effective against Bug?",
+                "Which types are very effective against Rock?",
+                "Which types are very effective against Ghost?",
+                "Which types are very effective against Dragon?",
+                "Which types are very effective against Dark?",
+                "Which types are very effective against Steel?",
+                "Which types are very effective against Fairy?",
+                // Single-type "Against which types is [Type] very effective?"
+                "Against which types is Fire very effective?",
+                "Against which types is Water very effective?",
+                "Against which types is Grass very effective?",
+                "Against which types is Electric very effective?",
+                "Against which types is Ice very effective?",
+                "Against which types is Fighting very effective?",
+                "Against which types is Poison very effective?",
+                "Against which types is Ground very effective?",
+                "Against which types is Flying very effective?",
+                "Against which types is Psychic very effective?",
+                "Against which types is Bug very effective?",
+                "Against which types is Rock very effective?",
+                "Against which types is Ghost very effective?",
+                "Against which type is Dragon very effective?",
+                "Against which types is Dark very effective?",
+                "Against which types is Steel very effective?",
+                "Against which types is Fairy very effective?",
+                // Selected dual-type "Which types are very effective against [Type1/Type2]?"
+                "Which types are very effective against Water/Flying?",
+                "Which types are very effective against Dragon/Ground?",
+                "Which types are very effective against Steel/Fairy?",
+                "Which type is very effective against Ghost/Dark?",
+                "Which types are very effective against Fire/Fighting?",
+                "Which types are very effective against Grass/Poison?",
+                "Which types are very effective against Electric/Steel?",
+                "Which types are very effective against Bug/Flying?",
+                "Which types are very effective against Rock/Ground?",
+                "Which types are very effective against Normal/Flying?",
+                "Which types are very effective against Poison/Bug?"
+            ].includes(q.question))
+        );
     } else { // HARD
-        // Include all questions
+        // Include all 83 questions
         shuffledQuestions = shuffle([...allQuestions]);
     }
 
